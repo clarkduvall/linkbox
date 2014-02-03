@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+
+  "name": "Link Box",
+  "description": "Draw a box over links!",
+  "version": "1.0",
+
+  "background": {
+    "scripts": [ "linkBox.js" ],
+    "persistent": false
+  },
+
+  "permissions": [
+    "activeTab"
+  ],
+
+  "commands": {
+    "link-box-tab": {
+      "description": "Open boxed links in new tabs.",
+      "suggested_key": {
+        "default": "Ctrl+Shift+L"
+      }
+    },
+    "link-box-window": {
+      "description": "Open boxed links in new window.",
+      "suggested_key": {
+        "default": "Ctrl+Shift+K"
+      }
+    }
+  }
+}
