@@ -16,7 +16,7 @@
   });
 
   chrome.runtime.onMessage.addListener(function(request) {
-    if (!request.links) return;
+    if (!request.links.length) return;
 
     if (newWindow) {
       chrome.windows.create({url: request.links});

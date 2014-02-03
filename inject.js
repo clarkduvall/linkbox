@@ -51,7 +51,9 @@
 
     if (!element) {
       element = document.createElement('div');
-      element.style.backgroundColor = 'rgba(0, 0, 0, .1)';
+      element.style.boxShadow = '0 0 5px rgba(0, 0, 0, .5) inset';
+      element.style.background = 'rgba(0, 0, 0, .1)';
+      element.style.borderRadius = '5px';
       element.style.zIndex = '999999';
       element.style.position = 'absolute';
       document.body.appendChild(element);
