@@ -1,11 +1,15 @@
 (function() {
-  var newWindow = false;
+  var newWindow = false,
+      boxing = false;;
 
   function linkBox() {
-    chrome.tabs.executeScript({ file: 'inject.js' });
+    boxing = true;
+    chrome.tabs.executeScript({file: 'src/inject.js'});
   }
 
   chrome.commands.onCommand.addListener(function(command) {
+    if (boxing) return;
+
     if (command === 'link-box-tab') {
       newWindow = false;
       linkBox();
@@ -16,6 +20,8 @@
   });
 
   chrome.runtime.onMessage.addListener(function(request) {
+    boxing = false;
+
     if (!request.links.length) return;
 
     if (newWindow) {

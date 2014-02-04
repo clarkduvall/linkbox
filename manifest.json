@@ -6,7 +6,7 @@
   "version": "1.0",
 
   "background": {
-    "scripts": [ "linkBox.js" ],
+    "scripts": [ "src/linkBox.js" ],
     "persistent": false
   },
 
@@ -16,15 +16,15 @@
 
   "commands": {
     "link-box-tab": {
-      "description": "Open boxed links in new tabs.",
+      "description": "Open boxed links in new tabs",
       "suggested_key": {
-        "default": "Ctrl+Shift+L"
+        "default": "Ctrl+A"
       }
     },
     "link-box-window": {
-      "description": "Open boxed links in new window.",
+      "description": "Open boxed links in new window",
       "suggested_key": {
-        "default": "Ctrl+Shift+K"
+        "default": "Ctrl+S"
       }
     }
   }

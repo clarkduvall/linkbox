@@ -4,8 +4,20 @@
       currentX,
       currentY,
       element = null,
+      counter,
       eventMap,
       styledLinks = [];
+
+  Array.prototype.unique = function() {
+    var ret = [];
+
+    for (var i = 0; i < this.length; ++i) {
+      if (ret.indexOf(this[i]) < 0)
+        ret.push(this[i]);
+    }
+
+    return ret;
+  };
 
   function EventMap() {
     this._events = {};
@@ -51,25 +63,41 @@
 
     if (!element) {
       element = document.createElement('div');
-      element.style.boxShadow = '0 0 5px rgba(0, 0, 0, .5) inset';
-      element.style.background = 'rgba(0, 0, 0, .1)';
+      element.style.boxShadow = '1px 1px 5px rgba(0, 0, 0, 0.5)';
+      element.style.background = 'rgba(0, 0, 0, 0.05)';
+      element.style.border = '2px solid rgba(255, 255, 255, 0.4)';
       element.style.borderRadius = '5px';
       element.style.zIndex = '999999';
       element.style.position = 'absolute';
+      element.style.textAlign = 'center';
+      element.style.overflow = 'hidden';
       document.body.appendChild(element);
+
+      counter = document.createElement('div');
+      counter.style.color = 'rgba(0, 0, 0, 0.2)';
+      counter.style.textShadow = '0 0 rgba(255, 255, 255, 0.5)';
+      element.appendChild(counter);
     }
 
     element.style.top = rect.top + 'px';
     element.style.left = rect.left + 'px';
     element.style.width = rect.width + 'px';
     element.style.height = rect.height + 'px';
+    counter.style.lineHeight = rect.height + 'px';
+    counter.style.fontSize = Math.min(rect.height, rect.width) * 0.8 + 'px';
+    counter.innerHTML = getValidBoxedURLs().length || '';
   }
 
   function clearStyles() {
     styledLinks.forEach(function(node) {
       node.style.textShadow = '';
+      node.style.outline = '';
     });
     styledLinks.length = 0;
+  }
+
+  function isValidURL(url) {
+    return url && url.indexOf('javascript:') !== 0
   }
 
   function highlightLinks() {
@@ -78,16 +106,16 @@
     clearStyles();
 
     links.forEach(function(node) {
-      node.style.textShadow = '0 0 2px red';
-      styledLinks.push(node);
+      if (isValidURL(node.href)) {
+        node.style.outline = '2px dashed red';
+        styledLinks.push(node);
+      }
     });
   }
 
   function createTabs() {
-    var links = getBoxedLinks();
-
     chrome.runtime.sendMessage({
-      links: links.map(function(node) { return node.href; })
+      links: getValidBoxedURLs()
     });
   }
 
@@ -95,19 +123,31 @@
     var aNodes = document.getElementsByTagName('a'),
         links = [],
         nodeRect,
+        node,
         rect = getRect(true);
 
     for (var i = 0; i < aNodes.length; ++i) {
-      nodeRect = aNodes[i].getBoundingClientRect();
+      node = aNodes[i];
+
+      if (node.offsetWidth <= 0 && node.offsetHeight <= 0) continue;
+
+      nodeRect = node.getBoundingClientRect();
 
       if (nodeRect.left < rect.right && nodeRect.right > rect.left &&
           nodeRect.top < rect.bottom && nodeRect.bottom > rect.top) {
-        if (aNodes[i].href !== '#')
-          links.push(aNodes[i]);
+        links.push(node);
       }
     }
 
     return links;
+  }
+
+  function getValidBoxedURLs() {
+    return getBoxedLinks().map(function(node) {
+       return node.href;
+     }).filter(function (href) {
+       return isValidURL(href);
+     }).unique();
   }
 
   function mouseDown(e) {
@@ -142,7 +182,6 @@
 
   function selectStart(e) {
     e.preventDefault();
-    return false;
   }
 
   eventMap.add('mousedown', mouseDown);
